@@ -7,4 +7,15 @@ Started the scMARK challenge to predict four cell types including Cancer and T-c
 I analyzed the statistical properties of the data and confirmed it follows a Negative Binomial distribution rather than a Poisson distribution. To fix this, I implemented log-normalization and selected only the top 2,000 highly variable genes to reduce noise. I trained a Random Forest baseline, but the error analysis showed it was confusing NK cells with CD8+ T-cells because their gene profiles are too similar.
 
 28/12/2025 - Testing PCA & Error Analysis
+
 I hypothesized that a Support Vector Machine (SVM) would handle the overlapping cell clusters better than decision trees. The SVM with balanced class weights successfully separated the NK cells and improved the overall recall significantly. I fixed a critical bug where the PCA was processing noise instead of signal and wrapped the final solution into a robust pipeline for submission.
+
+30/12/2025 - Investigation & Reality Check
+
+I wasn't satisfied with just guessing why the model keeps confusing NK cells with CD8+ T-cells, so I approached the problem from two angles: theory and practice.
+
+First, I went back to the scMARK benchmark paper, which confirmed that this isn't just a bug in my code, it is a fundamental challenge in the field. The authors explicitly note that these cell types are so biologically similar that standard supervised models frequently fail to separate them, especially on datasets generated with certain technologies (like Azizi et al. 2018).
+
+To verify this in my own data, I followed the standard Seurat - Guided Clustering Tutorial to manually extract and compare the top marker genes. The result was shocking: 5 out of the top 10 genes for NK cells and CD8+ T-cells are identical (Indices: 1829, 7449, 1017, 5000, 1827).
+
+Insight: The model isn't "confused", it is actually mathematically correct to be struggling. If 50% of the strongest features are the same, the signal overlap is massive. Since I cannot use heavy deep learning tools (like scVI) to fix this on such a small dataset, I have to accept this difficulty as part of the problem nature.
