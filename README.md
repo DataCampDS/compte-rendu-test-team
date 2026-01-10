@@ -19,3 +19,9 @@ First, I went back to the scMARK benchmark paper, which confirmed that this isn'
 To verify this in my own data, I followed the standard Seurat - Guided Clustering Tutorial to manually extract and compare the top marker genes. The result was shocking: 5 out of the top 10 genes for NK cells and CD8+ T-cells are identical (Indices: 1829, 7449, 1017, 5000, 1827).
 
 Insight: The model isn't "confused", it is actually mathematically correct to be struggling. If 50% of the strongest features are the same, the signal overlap is massive. Since I cannot use heavy deep learning tools (like scVI) to fix this on such a small dataset, I have to accept this difficulty as part of the problem nature.
+
+05/01/2026 - Final Submission
+
+After realizing that the cell types overlapped so much, I discovered that my standard feature selection (picking "Highly Variable Genes") was actually the root cause. It was prioritizing "loud" genes (like cancer markers) and throwing away the quiet, subtle genes that distinguish NK cells.
+
+To fix this, I built a "Focused Feature Selector" that explicitly looks for these subtle subtype markers and "injects" them into the dataset. When I fed this enriched data into the SVM, the results were clear: the model stopped guessing. I achieved a 90% balanced accuracy, and most importantly, the ability to correctly identify NK cells jumped by 10%. It turns out the key wasn't a more complex model, but simply giving the SVM the right biology-aware features. 
