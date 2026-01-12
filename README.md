@@ -1,3 +1,7 @@
+Note finale : 
+
+- Mahir : 9/20
+
 03/11/2025 - Discovery
 
 Started the scMARK challenge to predict four cell types including Cancer and T-cells using single-cell gene expression data. The dataset is challenging because it has very high dimensionality with 14,000 genes but only 1,000 training samples. I observed that the data matrix is extremely sparse and contains mostly zeros, which means I cannot feed the raw data into a model without significant cleaning.
